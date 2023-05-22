@@ -21,13 +21,12 @@ public:
     bool isEmpty() const;
     void clear();
     friend std::ostream& operator<<(std::ostream& os, MyStack<T>& obj) {
-        // Node<T>* ptr = nullptr;
-        // ptr = obj.list->getHead();
-        // while (ptr) {
-        //     os << ptr->getItem() << " ";
-        //     ptr = ptr->getNext();
-        // }
-        os << obj.list << " ";
+        Node<T>* ptr = nullptr;
+        ptr = obj.list->getHead();
+        while (ptr) {
+            os << ptr->getItem() << " ";
+            ptr = ptr->getNext();
+        }
         return os;
     }
 };
