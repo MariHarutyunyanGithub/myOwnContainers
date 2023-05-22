@@ -8,7 +8,7 @@ Vector::Vector(const Vector& other):
             m_cap{other.m_cap},
             m_buf{}
 {
-    if (!other.empty()) {
+    if (!other.isEmpty()) {
         m_buf = new int[m_cap];
         for (size_t i{}; i < m_size; ++i) {
             m_buf[i] = other.m_buf[i];
@@ -21,7 +21,7 @@ Vector::Vector(const Vector&& other):
             m_cap{other.m_cap},
             m_buf{}
 {
-    if (!other.empty()) {
+    if (!other.isEmpty()) {
         m_buf = new int[m_cap];
         for (size_t i{}; i < m_size; ++i) {
             m_buf[i] = std::move(other.m_buf[i]);
@@ -58,7 +58,7 @@ Vector& Vector::operator=(const Vector& oth)
     if (&oth == this) {
         return *this;
     }
-    if (!oth.empty()) {
+    if (!oth.isEmpty()) {
         m_size = oth.m_size;
         m_cap  = oth.m_cap;    
         m_buf = new int[m_cap];
@@ -73,7 +73,7 @@ Vector& Vector::operator=(const Vector&& oth)
     if (&oth == this) {
         return *this;
     }
-    if (!oth.empty()) {
+    if (!oth.isEmpty()) {
         m_size = std::move(oth.m_size);
         m_cap = std::move(oth.m_cap);    
         m_buf = new int[m_cap];
@@ -86,10 +86,10 @@ Vector& Vector::operator=(const Vector&& oth)
 
 Vector& Vector::operator+(Vector& other)
 {
-    if (other.empty()) {
+    if (other.isEmpty()) {
         return *this;
     }
-    if (this->empty()) {
+    if (this->isEmpty()) {
         return other;
     }
     int* tmp = new int[m_size];
@@ -131,7 +131,7 @@ const int& Vector::operator[](size_t index) const
 
 void Vector::push_back(const int val)
 {
-   if (this->empty()) {
+   if (this->isEmpty()) {
        m_buf = new int[m_cap];
        m_buf[m_size++] = val;
    }
@@ -151,67 +151,42 @@ void Vector::push_back(const int val)
    }
 }
 
-// void Vector::push_back(const int&& val)
-// {
-// 	if(this->empty()){
-//         std::cout << "was empty" << std::endl;
-// 		m_buf = new int[m_cap];
-// 		m_buf[m_size++] = std::move(val);
-// 	}else{
-// 		if (m_size < m_cap){
-//             std::cout << "else if" <<std::endl;
-// 			m_buf[m_size++] = std::move(val);
-// 		}else{
-//             std::cout << "else" << std::endl;
-// 			m_cap *= 2;
-// 			int* tmp = new int[m_cap];
-// 			for(size_t i{}; i < m_size; ++i){
-// 				tmp[i] = std::move(m_buf[i]);
-// 			}
-// 			delete[] m_buf;
-// 			m_buf = tmp;
-// 			tmp = nullptr;
-// 			m_buf[m_size++] = std::move(val);
-// 		}
-// 	}
-// }
-
 void Vector::insert(size_t pos, const int& val)
 {
-	if (this->empty()){
+	if (this->isEmpty()){
 		m_buf = new int[m_cap];
 		m_buf[0] = val;
-	}else{
-		if(m_size < m_cap){
-			for (size_t i{pos}; i < m_size; ++i){
-				m_buf[i + 1] = m_buf[i];
-			}
-			m_buf[pos] = val;
-			++m_size;
-		}else{
-			m_cap *= 2;
-			int* tmp = new int[m_cap];
-			for (size_t i{}; i < pos; ++i){
-				tmp[i] = m_buf[i];
-			}
-			tmp[pos] = val;
-			for (size_t i{pos}; i < m_size; ++i){
-				tmp[i + 1] = m_buf[i];
-			}
-			delete[] m_buf;
-			m_buf = tmp;
-			tmp = nullptr;
-			++m_size;
-		}
+	} else if (pos <= m_size) {
+        if(m_size < m_cap){
+            for (size_t i{pos}; i < m_size; ++i){
+                m_buf[i + 1] = m_buf[i];
+            }
+            m_buf[pos] = val;
+            ++m_size;
+        }else{
+            m_cap *= 2;
+            int* tmp = new int[m_cap];
+            for (size_t i{}; i < pos; ++i){
+                tmp[i] = m_buf[i];
+            }
+            tmp[pos] = val;
+            for (size_t i{pos}; i < m_size; ++i){
+                tmp[i + 1] = m_buf[i];
+            }
+            delete[] m_buf;
+            m_buf = tmp;
+            tmp = nullptr;
+            ++m_size;
+        }
 	}
 }
 
 void Vector::insert(size_t pos,const int&& val)
 {
-	if (this->empty()){
+	if (this->isEmpty()){
 		m_buf = new int[m_cap];
 		m_buf[0] = std::move(val);
-	}else{
+	} else if (pos <= m_size) {
 		if(m_size < m_cap){
 			for (size_t i{pos}; i < m_size; ++i){
 				m_buf[i + 1] = m_buf[i];
@@ -233,7 +208,7 @@ void Vector::insert(size_t pos,const int&& val)
 			tmp = nullptr;
 			++m_size;
 		}
-	}
+    }
 }
 
 void Vector::remove_at(size_t index) {
@@ -250,14 +225,14 @@ void Vector::remove_at(size_t index) {
     }
 }
 
-bool Vector::empty() const
+bool Vector::isEmpty() const
 {
     return !m_buf;
 }
 
 size_t Vector::find_by_value(const int& val)
 {
-    if (!this->empty()) {
+    if (!this->isEmpty()) {
         for (size_t i{}; i < m_size; ++i) {
             if (m_buf[i] == val) {
                 return i;
@@ -269,10 +244,10 @@ size_t Vector::find_by_value(const int& val)
 
 size_t Vector::remove_by_value(const int& val)
 {
-    if (!this->empty()) {
+    if (!this->isEmpty()) {
         size_t pos = find_by_value(val);
         if (pos != -1) {
-            for (size_t i {pos}; i < m_size; ++i){
+            for (size_t i {pos + 1}; i < m_size; ++i){
 			    m_buf[i - 1] = m_buf[i];
 		    }
 		    --m_size;

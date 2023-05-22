@@ -20,24 +20,22 @@ class Vector
         const int& operator[](size_t) const;
         Vector& operator+(Vector&);
         void operator+=(Vector&);
-        friend std::ostream& operator<<(std::ostream& cout, const Vector& vec)
+        friend std::ostream& operator<<(std::ostream& os, const Vector& vec)
         {
             for (size_t i{}; i < vec.m_size; ++i) {
-                cout << vec.m_buf[i] << " ";
+                os << vec.m_buf[i] << " ";
             }
-            cout << std::endl;
-            return cout;
+            return os;
         }
 
         void push_back(const int);
-        // void push_back(const int&&);
         void pop_back();
         void insert(size_t, const int&);
         void insert(size_t, const int&&);
         void remove_at(size_t);
         size_t find_by_value(const int&);
         size_t remove_by_value(const int&);
-        bool empty() const;
+        bool isEmpty() const;
         void clear();
 
         private:
